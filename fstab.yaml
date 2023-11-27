@@ -1,6 +1,6 @@
 mountpoints:
   /:
-    url: https://adobe.sharepoint.com/:f:/r/sites/adobecom/Express/website
+    url: https://adobe-my.sharepoint.com/:f:/r/personal/sbhanderi_adobe_com/Documents/website1
 
 folders:
   /express/templates/: /express/templates/default
