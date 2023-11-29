@@ -4,6 +4,7 @@ import {
 } from './utils.js';
 
 import {
+  getDataWithContext,
   getDataWithId,
   getPillWordsMapping,
 } from './browse-api-controller.js';
@@ -18,7 +19,8 @@ async function fetchLinkList() {
   if (!window.linkLists) {
     window.linkLists = {};
     if (!window.linkLists.ckgData) {
-      const response = await getDataWithId();
+      // ! CKG pills with url
+      const response = await getDataWithContext({urlPath : window.location.pathname});
       // catch data from CKG API, if empty, use top priority categories sheet
       if (response && response.queryResults[0].facets) {
         window.linkLists.ckgData = response.queryResults[0].facets[0].buckets.map((ckgItem) => {
@@ -145,7 +147,10 @@ async function updateLinkList(container, linkPill, list) {
       const topicsQuery = `${topics} ${d.displayValue}`.split(' ')
         .filter((item, i, allItems) => i === allItems.indexOf(item))
         .join(' ').trim();
-      let displayText = formatLinkPillText(d);
+        //  ! not sure why topics were appended to the pills name 
+        //  * set display name to pills
+      let displayText = d.displayValue;
+      // let some = formatLinkPillText(d);
 
       const prefix = getConfig().locale.prefix.replace('/', '');
       const localeColumnString = prefix === '' ? 'EN' : prefix.toUpperCase();
@@ -303,9 +308,11 @@ export default async function updateAsyncBlocks() {
   hideAsyncBlocks();
   // TODO: integrate memoization
   const showSearchMarqueeLinkList = getMetadata('show-search-marquee-link-list');
-  if (document.body.dataset.device === 'desktop' && (!showSearchMarqueeLinkList || ['yes', 'true', 'on', 'Y'].includes(showSearchMarqueeLinkList))) {
-    await lazyLoadSearchMarqueeLinklist();
-  }
+  // ! call for pills regardless of flag in metadata sheet 
+  // if (document.body.dataset.device === 'desktop' && (!showSearchMarqueeLinkList || ['yes', 'true', 'on', 'Y'].includes(showSearchMarqueeLinkList))) {
+  //   await lazyLoadSearchMarqueeLinklist();
+  // }
+  await lazyLoadSearchMarqueeLinklist();
   await lazyLoadLinklist();
   await lazyLoadSEOLinkList();
 }
